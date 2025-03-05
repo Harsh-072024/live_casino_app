@@ -1,0 +1,48 @@
+.card-container {
+    width: 120px;
+    height: 180px;
+    background: white;
+    border-radius: 10px;
+    border: 2px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    position: relative;
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+  }
+  
+  .card-header, .card-footer {
+    position: absolute;
+    font-size: 20px;
+  }
+  
+  .card-header {
+    top: 10px;
+    left: 10px;
+  }
+  
+  .card-footer {
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  .card-value {
+    font-size: 50px;
+  }
+  
+  /* Apply red color to hearts and diamonds */
+  .red-suit {
+    color: red;
+  }
+  
+  .winner {
+    border: 3px solid gold;
+    box-shadow: 0px 0px 10px gold;
+  }
+  
