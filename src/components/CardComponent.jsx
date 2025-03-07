@@ -1,5 +1,6 @@
 import React from "react";
-import "@/styles/CardComponent.css";  // Use the alias for better path resolution
+import "../styles/CardComponent.css";
+
 
 
 const CardComponent = ({ title, card, isWinner }) => {
