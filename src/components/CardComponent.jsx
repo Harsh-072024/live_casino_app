@@ -2,7 +2,6 @@ import React from "react";
 import "@/styles/CardComponent.css";  // Use the alias for better path resolution
 
 
-
 const CardComponent = ({ title, card, isWinner }) => {
   const isRedSuit = card.suit === "♥" || card.suit === "♦";
 
