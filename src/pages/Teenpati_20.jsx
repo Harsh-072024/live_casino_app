@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Button } from "reactstrap";
-import TeenpattiCard from "../components/TeenpattiCard.jsx";
+import TeenPattiCard from "../components/TeenPattiCard.jsx";
 import Timer from "../components/Timer";
-import BalanceDisplay from "../components/BalanceDisplay";
 import PreviousWinners from "../components/PreviousWinners";
 import Betting from "../components/Betting";
 import { getThreeRandomCards, determineTeenPattiWinner } from "../utils/TeenPattiUtils";
@@ -17,18 +16,17 @@ const Teenpati_20 = () => {
   const [winner, setWinner] = useState("");
   const [previousWinners, setPreviousWinners] = useState([]);
   const [timer, setTimer] = useState(10);
-  const [betAmount, setBetAmount] = useState(predefinedBets[0]);
   const [betOn, setBetOn] = useState(null);
   const { balance, setBalance, exposure, setExposure } = useContext(BalanceContext);
 
   useEffect(() => {
-    if (timer > 0 && betOn !== null) {
+    if (timer > 0) {
       const countdown = setTimeout(() => setTimer((prev) => prev - 1), 1000);
       return () => clearTimeout(countdown);
     } else if (timer === 0) {
       generateTeenPattiCards();
     }
-  }, [timer, betOn]);
+  }, [timer]);
 
   const generateTeenPattiCards = () => {
     console.log("Dealing cards...");
@@ -39,12 +37,12 @@ const Teenpati_20 = () => {
     setPlayerB([]);
     setWinner("");
 
-    setTimeout(() => setPlayerA([handA[0]]), 2000);
-    setTimeout(() => setPlayerB([handB[0]]), 4000);
-    setTimeout(() => setPlayerA((prev) => [...prev, handA[1]]), 6000);
-    setTimeout(() => setPlayerB((prev) => [...prev, handB[1]]), 8000);
-    setTimeout(() => setPlayerA((prev) => [...prev, handA[2]]), 10000);
-    setTimeout(() => setPlayerB((prev) => [...prev, handB[2]]), 12000);
+    setTimeout(() => setPlayerA([handA[0]]), 1000);
+    setTimeout(() => setPlayerB([handB[0]]), 2000);
+    setTimeout(() => setPlayerA((prev) => [...prev, handA[1]]), 3000);
+    setTimeout(() => setPlayerB((prev) => [...prev, handB[1]]), 4000);
+    setTimeout(() => setPlayerA((prev) => [...prev, handA[2]]), 5000);
+    setTimeout(() => setPlayerB((prev) => [...prev, handB[2]]), 6000);
 
     setTimeout(() => {
       console.log("Player A:", handA);
@@ -61,59 +59,51 @@ const Teenpati_20 = () => {
       setPreviousWinners((prevWinners) => [gameWinner, ...prevWinners].slice(0, 7));
 
       setTimeout(() => {
-        setBetAmount(predefinedBets[0]);
         setBetOn(null);
-        setTimer(10);
+        setTimer(10); // Reset timer for the next round
         console.log("New round starting...");
       }, 3000);
-    }, 14000);
+    }, 7000);
   };
 
   return (
     <div className="mt-20">
-    <div className="teenpatti-container">
-      <Timer timer={timer} setTimer={setTimer} />
+      <div className="teenpatti-container">
+        <h3 className="timer-text">Time left: {timer}</h3>
+        <div className="player-section">
+          <div className="player-box">
+            <h4>Player A</h4>
+            <div className="card-group">
+              {playerA.map((card, index) => (
+                <TeenPattiCard key={index} card={card} isWinner={winner === "Player A"} />
+              ))}
+            </div>
+          </div>
 
-      <div className="player-section">
-        <div className="player-box">
-          <h4>Player A</h4>
-          <div className="card-group">
-            {playerA.map((card, index) => (
-              <TeenpattiCard key={index} card={card} isWinner={winner === "Player A"} />
-            ))}
+          <div className="player-box">
+            <h4>Player B</h4>
+            <div className="card-group">
+              {playerB.map((card, index) => (
+                <TeenPattiCard key={index} card={card} isWinner={winner === "Player B"} />
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="player-box">
-          <h4>Player B</h4>
-          <div className="card-group">
-            {playerB.map((card, index) => (
-              <TeenpattiCard key={index} card={card} isWinner={winner === "Player B"} />
-            ))}
-          </div>
-        </div>
+        <h3 className="winner-text">{winner ? `Winner: ${winner}` : ""}</h3>
+
+        <PreviousWinners previousWinners={previousWinners} />
+
+        <Betting
+          balance={balance}
+          setBalance={setBalance}
+          exposure={exposure}
+          setExposure={setExposure}
+          betOn={betOn}
+          setBetOn={setBetOn}
+          timer={timer}
+        />
       </div>
-
-      <h3 className="winner-text">{winner ? `Winner: ${winner}` : ""}</h3>
-
-      <PreviousWinners previousWinners={previousWinners} />
-
-      {/* Using Betting Component */}
-      <Betting
-        balance={balance}
-        setBalance={setBalance}
-        exposure={exposure}
-        setExposure={setExposure}
-        betOn={betOn}
-        setBetOn={setBetOn}
-        betAmount={betAmount}
-        setBetAmount={setBetAmount}
-      />
-
-      {/* <Button className="mt-1" color="primary" onClick={generateTeenPattiCards}>
-        Generate New Cards
-      </Button> */}
-    </div>
     </div>
   );
 };
