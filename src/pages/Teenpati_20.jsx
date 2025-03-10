@@ -4,7 +4,7 @@ import TeenPattiCard from "../components/TeenPattiCard.jsx";
 import Timer from "../components/Timer";
 import PreviousWinners from "../components/PreviousWinners";
 import Betting from "../components/Betting";
-import { getThreeRandomCards, determineTeenPattiWinner } from "../utils/TeenPattiUtils";
+import { getThreeRandomCards, determineTeenPattiWinner } from  "../Utils/TeenPattiUtils.js";
 import { BalanceContext } from "../context/BalanceContext.jsx";
 import "./../styles/Teenpati_20.css";
 
