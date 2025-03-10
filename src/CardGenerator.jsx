@@ -1,25 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Button } from "reactstrap";
 import CardComponent from "./components/CardComponent.jsx";
 import WinnerDisplay from "./components/WinnerDisplay";
 import Timer from "./components/Timer";
-import BalanceDisplay from "./components/BalanceDisplay";
-import { getTwoRandomCards, determineWinner } from "./Utils/CardUtils.js"
 import PreviousWinners from "./components/PreviousWinners";
-import BetControls from "./components/BetControls";
-
-
-const predefinedBets = [100, 200, 500, 1000, 2000];
+import Betting from "./components/Betting"; // Import Betting Component
+import { BalanceContext } from "./context/BalanceContext.jsx";
+import { getTwoRandomCards, determineWinner } from "./Utils/CardUtils.js";
 
 const CardGenerator = () => {
   const [cards, setCards] = useState([{ suit: "", value: "" }, { suit: "", value: "" }]);
   const [winner, setWinner] = useState("");
   const [previousWinners, setPreviousWinners] = useState([]);
   const [timer, setTimer] = useState(10);
-  const [balance, setBalance] = useState(1500);
-  const [betAmount, setBetAmount] = useState(predefinedBets[0]);
+  const { balance, setBalance, exposure, setExposure } = useContext(BalanceContext);
   const [betOn, setBetOn] = useState(null);
-  const [exposure, setExposure] = useState(0);
 
   useEffect(() => {
     if (timer > 0) {
@@ -30,32 +25,10 @@ const CardGenerator = () => {
     }
   }, [timer]);
 
-  const addMoney = () => {
-    setBalance((prevBalance) => prevBalance + 500);
-    alert("₹500 added to balance.");
-  };
-
-  const placeBet = (betSelection) => {
-    if (balance <= 0) {
-      alert("⚠ Insufficient balance! Please add money to continue playing.");
-      return;
-    }
-    if (betAmount > 0 && !betOn) {
-      if (betAmount > balance) {
-        alert("⚠ Bet amount exceeds balance! Enter a lower amount.");
-        return;
-      }
-      setBetOn(betSelection);
-      setExposure(betAmount);
-      setBalance(prevBalance => prevBalance - betAmount); // Deduct balance immediately after placing bet
-    }
-  };
-  
-
   const generateNewCards = () => {
     const [cardA, cardB] = getTwoRandomCards();
-    setCards([cardA, { suit: "", value: "" }]); // Show Card A immediately, Card B is empty
-    
+    setCards([cardA, { suit: "", value: "" }]); // Show Card A first
+
     setTimeout(() => {
       setCards([cardA, cardB]); // Show Card B after 2 seconds
       const newWinner = determineWinner(cardA, cardB);
@@ -71,7 +44,7 @@ const CardGenerator = () => {
             updatedBalance = Math.max(updatedBalance, 0);
           }
         }
-        setExposure(0); // Reset exposure after round
+        setExposure(0);
         return updatedBalance;
       });
 
@@ -81,17 +54,15 @@ const CardGenerator = () => {
       });
 
       setTimeout(() => {
-        setBetAmount(predefinedBets[0]);
         setBetOn(null);
       }, 1000);
     }, 2000);
   };
 
   return (
-    <div className="d-flex flex-column align-items-center mt-2">
-      <BalanceDisplay balance={balance} exposure={exposure} addMoney={addMoney} />
+    <div className="d-flex flex-column align-items-center mt-20">
       <Timer timer={timer} setTimer={setTimer} />
-      
+
       <div className="d-flex gap-2">
         <CardComponent title="Card A" card={cards[0]} isWinner={winner === "A"} />
         <CardComponent title="Card B" card={cards[1]} isWinner={winner === "B"} />
@@ -99,21 +70,21 @@ const CardGenerator = () => {
 
       <WinnerDisplay winner={winner === "A" ? "Winner: A" : winner === "B" ? "Winner: B" : "It's a Tie!"} />
       <PreviousWinners previousWinners={previousWinners} />
-      <BetControls 
-        betAmount={betAmount} 
-        setBetAmount={setBetAmount} 
-        placeBet={placeBet} 
+
+      {/* Reused Betting Component */}
+      <Betting 
+        balance={balance} 
+        setBalance={setBalance} 
+        exposure={exposure} 
+        setExposure={setExposure} 
         betOn={betOn} 
-        predefinedBets={predefinedBets} 
+        setBetOn={setBetOn} 
+        timer={timer} 
       />
-      <div className="mt-2">
-        {predefinedBets.map((amount) => (
-          <Button key={amount} color="secondary" className="m-1" onClick={() => setBetAmount(amount)}>
-            {amount}
-          </Button>
-        ))}
-      </div>
-      <Button className="mt-1" color="primary" onClick={generateNewCards}>Generate New Cards</Button>
+
+      <Button className="mt-2" color="primary" onClick={generateNewCards}>
+        Generate New Cards
+      </Button>
     </div>
   );
 };
