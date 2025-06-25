@@ -3,8 +3,6 @@ import { axiosInstance } from "../lib/axios";
 
 import { useAuth } from "../context/AuthContext";
 
-
-
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");

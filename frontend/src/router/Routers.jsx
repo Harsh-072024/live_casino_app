@@ -9,7 +9,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import AdminRegister from "../pages/AdminRegister";
 import AdminDashboard from "../pages/AdminDashboard";
-import ChangePassword from "../pages/Changepassword";
+import ChangePassword from "../pages/ChangePassword";
 import Bets from "../pages/Bets";
 import AccountStatement from "../pages/AccountStatement";
 
