@@ -5,6 +5,7 @@ import { ApiError } from "../utils/ApiError.js";
 
 // ✅ Middleware: Verify JWT token from cookies or Authorization header
 export const verifyToken = asyncHandler(async (req, res, next) => {
+  console.log("cookies", req.cookies)
   const token =
     req.cookies?.accessToken ||
     (req.headers.authorization?.startsWith("Bearer ") &&
