@@ -1,20 +1,18 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react()],
   build: {
     minify: 'esbuild',
-  },
-  preview: {
-    host: true,
-    port: 4173,
-    // ✅ Add this line
-    allowedHosts: ['live-casino-app-1.onrender.com']
+    outDir: 'dist',
   },
   server: {
     host: true,
     port: 5173,
+  },
+  preview: {
+    host: true,
+    port: 4173,
   },
 });
