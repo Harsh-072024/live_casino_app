@@ -14,10 +14,13 @@ import Bets from "../pages/Bets";
 import AccountStatement from "../pages/AccountStatement";
 
 const PrivateRoute = ({ element, adminOnly = false }) => {
-  const { user } = useContext(AuthContext);
-  const token = localStorage.getItem("token");
+  const { user, loading } = useContext(AuthContext);
 
-  if (!user && !token) {
+  if (loading) {
+    return <div>Loading...</div>; // or spinner
+  }
+
+  if (!user) {
     return <Navigate to="/login" />;
   }
 
@@ -27,6 +30,7 @@ const PrivateRoute = ({ element, adminOnly = false }) => {
 
   return element;
 };
+
 
 const Routers = () => {
   return (
