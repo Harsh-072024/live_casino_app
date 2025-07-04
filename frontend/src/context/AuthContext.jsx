@@ -1,7 +1,8 @@
 // src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect , useRef} from "react";
 import { axiosInstance } from "../lib/axios";
-import { toast } from "react-toastify";
+import { notifySuccess, notifyError } from "../Utils/toastNotify";
+
 
 export const AuthContext = createContext();
 
@@ -21,10 +22,12 @@ const AuthProvider = ({ children }) => {
     const me = await axiosInstance.get("/auth/me");
     // console.log("lgin user data",me.data.data)
     setUser(me.data.data);
-    toast.success("Logged in");
+    notifySuccess("Logged in");
+
     return me.data.data;
   } catch (err) {
-    toast.error(err.response?.data?.message || "Login failed");
+    notifyError(err.response?.data?.message || "Login failed");
+
     throw err;
   }
 };
@@ -36,7 +39,7 @@ const AuthProvider = ({ children }) => {
       await axiosInstance.post("/auth/logout");
     } catch (_) {}
     setUser(null);
-    toast.success("Logged out");
+    notifySuccess("Logged out");
   };
 
   const isAuthenticated = !!user;
@@ -50,7 +53,8 @@ const AuthProvider = ({ children }) => {
         setUser(res.data.data);
       } catch (err) {
         setUser(null);
-        toast.error("Session expired. Please log in again.");
+        notifyError("Session expired. Please log in again.");
+
       } finally {
         setLoading(false);
       }

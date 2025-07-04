@@ -1,1 +1,20 @@
 @import "tailwindcss";
+/* Ensure toast shows below the top edge on small devices */
+@media (max-width: 768px) {
+  .Toastify__toast-container--top-center {
+    top: 3.5rem !important;
+    z-index: 9999 !important;
+    width: 90vw;
+    left: 5vw;
+    right: 5vw;
+  }
+
+  .Toastify__toast {
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+
+  .Toastify__close-button {
+    padding: 0.2rem;
+  }
+}

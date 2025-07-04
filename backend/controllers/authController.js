@@ -81,7 +81,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    sameSite: "lax",
   };
 
   return res
@@ -115,12 +115,12 @@ export const logoutUser = asyncHandler(async (req, res) => {
   res
     .clearCookie("accessToken", {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
     })
     .clearCookie("refreshToken", {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
     });
 
@@ -160,14 +160,14 @@ export const refreshToken = asyncHandler(async (req, res) => {
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // true when deployed
-      sameSite: "none", // ✅ IMPORTANT for cross-origin requests
+      sameSite: "lax", // ✅ IMPORTANT for cross-origin requests
       maxAge: 15 * 60 * 1000,
     });
 
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // true when deployed
-      sameSite: "none", // ✅ IMPORTANT for cross-origin requests
+      sameSite: "lax", // ✅ IMPORTANT for cross-origin requests
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 

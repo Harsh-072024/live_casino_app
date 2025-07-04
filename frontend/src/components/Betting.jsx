@@ -1,5 +1,10 @@
 import { useContext, useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import {
+  notifySuccess,
+  notifyError,
+  notifyBetResult,
+} from "../Utils/toastNotify.js";
+
 import { BalanceContext } from "../context/BalanceContext";
 import { axiosInstance } from "../lib/axios.js";
 
@@ -11,64 +16,56 @@ const Betting = ({ betOn, setBetOn, roundId, winner, user, timer, bettingOpen, g
 
   // ✅ Handle result when winner changes
   useEffect(() => {
-    const handleResult = async () => {
-      if (!winner || !betOn || exposure <= 0) return;
+  const handleResult = async () => {
+    if (!winner || !betOn || exposure <= 0) return;
 
-      const isWin = winner === betOn;
-      const winnings = isWin ? exposure * 2 : 0;
+    const isWin = winner === betOn;
+    const result = isWin ? "win" : "lose";
 
-      toast[isWin ? "success" : "error"](
-        isWin ? `🎉 You won ₹${winnings}!` : "❌ You lost the bet!",
-        { position: "top-center" }
-      );
+    notifyBetResult(result, exposure);
+    await fetchBalance(user._id);
 
-      await fetchBalance(user._id);
+    setExposure(0);
+    setBetOn(null);
+    setBetAmount(predefinedBets[0]);
+  };
+  handleResult();
+}, [winner]);
 
-      setExposure(0);
-      setBetOn(null);
-      setBetAmount(predefinedBets[0]);
-    };
-    handleResult();
-  }, [winner]);
 
 const placeBet = async (selection) => {
   if (!roundId) {
-    toast.error("⛔ Round not ready yet!", { position: "top-center" });
-    return;
+    return notifyError("Round not ready yet!");
   }
   if (!bettingOpen || timer <= 0) {
-    toast.error("⚠️ Betting is closed for this round!", { position: "top-center" });
-    return;
+    return notifyError("Betting is closed for this round!");
   }
   if (!betAmount || betAmount <= 0 || isNaN(betAmount)) {
-    toast.error("⚠️ Invalid bet amount!", { position: "top-center" });
-    return;
+    return notifyError("Invalid bet amount!");
   }
   if (betAmount > balance) {
-    toast.error("⚠️ Insufficient balance!", { position: "top-center" });
-    return;
+    return notifyError("Insufficient balance!");
   }
 
   try {
     await axiosInstance.post("/bets", {
       roundId,
-      gameType, // ✅ Use the actual passed prop
+      gameType,
       selection,
       amount: betAmount,
     });
+
     setBalance((prev) => prev - betAmount);
     setBetOn(selection);
     setExposure(betAmount);
-    toast.success(`🎰 Bet on ${selection} placed!`, {
-      position: "top-center",
-    });
+
+    notifySuccess(`Bet on ${selection} placed!`);
   } catch (err) {
-    console.error("❌ Error placing bet:", err?.response?.data || err.message);
-    toast.error(`⚠ ${err?.response?.data?.error || "Error placing bet!"}`, {
-      position: "top-center",
-    });
+    console.error("Error placing bet:", err?.response?.data || err.message);
+    notifyError(err?.response?.data?.error || "Error placing bet!");
   }
 };
+
 
 
 

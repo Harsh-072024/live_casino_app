@@ -8,7 +8,7 @@ import { BalanceContext } from "../context/BalanceContext.jsx";
 import { AuthContext } from "../context/AuthContext.jsx";
 import { axiosInstance } from "../lib/axios.js";
 import socket from "../socket.js";
-import { toast } from "react-toastify";
+import { notifyBetResult, notifyError } from "../Utils/toastNotify.js";
 
 const Teenpati_20 = () => {
   const [cardA, setCardA] = useState([]);
@@ -48,34 +48,32 @@ const Teenpati_20 = () => {
   }, []);
 
   // ✅ 3️⃣ Balance update
-  const handleBalanceUpdate = useCallback(
-    async (gameWinner) => {
-      if (!user?._id || !betOn || exposure <= 0) return;
+const handleBalanceUpdate = useCallback(
+  async (gameWinner) => {
+    if (!user?._id || !betOn || exposure <= 0) return;
 
-      try {
-        const updatedBalance = await fetchBalance(user._id);
-        if (gameWinner === betOn) {
-          const wonAmount = exposure * 2;
-          toast.success(`🎉 You won ${wonAmount}! New Balance: ${updatedBalance}`, {
-            position: "top-center",
-          });
-        } else {
-          toast.error("❌ You lost the bet!", {
-            position: "top-center",
-          });
-        }
-      } catch (err) {
-        console.error("❌ Balance update failed:", err);
-        toast.error("⚠️ Failed to update balance", {
-          position: "top-center",
-        });
-      } finally {
-        setExposure(0);
-        setBetOn(null);
-      }
-    },
-    [user, betOn, exposure, fetchBalance, setExposure, setBetOn]
-  );
+    try {
+      const updatedBalance = await fetchBalance(user._id);
+
+      const result =
+        gameWinner === "tie"
+          ? "tie"
+          : gameWinner === betOn
+          ? "win"
+          : "lose";
+
+      notifyBetResult(result, exposure, updatedBalance);
+    } catch (err) {
+      console.error("❌ Balance update failed:", err);
+      notifyError("Failed to update balance");
+    } finally {
+      setExposure(0);
+      setBetOn(null);
+    }
+  },
+  [user, betOn, exposure, fetchBalance, setExposure, setBetOn]
+);
+
 
   // ✅ 4️⃣ Socket listeners
   useEffect(() => {

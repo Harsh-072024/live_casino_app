@@ -8,7 +8,8 @@ import Betting from "../components/Betting.jsx";
 import Timer from "../components/Timer.jsx";
 import { BalanceContext } from "../context/BalanceContext.jsx";
 import {useAuth } from "../context/AuthContext.jsx";
-import { toast } from "react-toastify";
+import { notifySuccess, notifyError, notifyInfo } from "../Utils/toastNotify";
+
 import "react-toastify/dist/ReactToastify.css";
 import socket from "../socket.js";
 
@@ -80,23 +81,19 @@ const CardGenerator = () => {
       // ✅ Outcome Messages
       if (newWinner === betOn) {
         const wonAmount = exposure * 2;
-        toast.success(`🎉 You won ₹${wonAmount}! New Balance: ${updatedBalance}`, {
-          position: "top-center",
-        });
+        notifySuccess(`🎉 You won ₹${wonAmount}! New Balance: ${updatedBalance}`);
+
       } else if (newWinner === "tie") {
-        toast.info("🤝 It's a tie! Bet refunded.", {
-          position: "top-center",
-        });
+       notifyInfo("🤝 It's a tie! Bet refunded.");
+
       } else {
-        toast.error("❌ You lost the bet!", {
-          position: "top-center",
-        });
+        notifyError("❌ You lost the bet!");
+
       }
     } catch (err) {
       console.error("❌ Balance update failed:", err);
-      toast.error("⚠ Failed to update balance", {
-        position: "top-center",
-      });
+      notifyError("⚠ Failed to update balance");
+
     } finally {
       // ✅ Always reset bet and exposure
       setExposure(0);

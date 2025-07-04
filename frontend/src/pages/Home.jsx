@@ -30,7 +30,8 @@ const Home = () => {
 
   return (
     <div className="w-full flex flex-col items-center text-center p-4 mt-20">
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+
         {games.map((game, index) => (
           <GameCard key={index} imageSrc={game.imageSrc} link={game.link} />
         ))}
